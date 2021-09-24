@@ -255,10 +255,10 @@ class ppp(nn.Module ):
 
 
 
-class BGALayer1(nn.Module):
+class MBA1(nn.Module):
 
     def __init__(self):
-        super(BGALayer1, self).__init__()
+        super(MBA1, self).__init__()
         self.left1 = nn.Sequential(
             nn.Conv2d(
                 64, 64, kernel_size=3, stride=1,
@@ -310,10 +310,10 @@ class BGALayer1(nn.Module):
         return out
 
 
-class BGALayer2(nn.Module):
+class MBA2(nn.Module):
 
     def __init__(self):
-        super(BGALayer2, self).__init__()
+        super(MBA2, self).__init__()
         self.left1 = nn.Sequential(
             nn.Conv2d(
                 256,256, kernel_size=3, stride=1,
@@ -376,10 +376,10 @@ class BGALayer2(nn.Module):
 
 
 
-class BGALayer3(nn.Module):
+class MBA3(nn.Module):
 
     def __init__(self):
-        super(BGALayer3, self).__init__()
+        super(MBA3, self).__init__()
         self.left1 = nn.Sequential(
             nn.Conv2d(
                 512, 512, kernel_size=3, stride=1,
@@ -436,9 +436,9 @@ class BGALayer3(nn.Module):
 
 
 
-class GAUModule(nn.Module):
+class FFU(nn.Module):
     def __init__(self, in_ch=1024,out_ch = 2):
-        super(GAUModule, self).__init__()
+        super(FFU, self).__init__()
 
         # self.conv1 = nn.Sequential(
         #     nn.AdaptiveAvgPool2d(1),  # 不改变通道，尺寸变成1x1
@@ -560,10 +560,10 @@ class BR_strip(nn.Module):
         out = self.conv3x1(self.conv1x3(x))
         return out
 
-class FPAModule2(nn.Module):  # in_ch=256   out_ch=num_class
+class DFE(nn.Module):  # in_ch=256   out_ch=num_class
 
     def __init__(self, in_ch, out_ch,reduction):
-        super(FPAModule2, self).__init__()
+        super(DFE, self).__init__()
         self.conv1x3 =nn.Sequential(
             nn.Conv2d(in_ch,out_ch,kernel_size=(1,3),stride=1,padding=(0,1)),
             nn.BatchNorm2d(out_ch),
@@ -692,15 +692,15 @@ class A_3(nn.Module):
         self.conv5_x = resnet.layer4  # 1/32
 
 
-        self.fpa = FPAModule2(in_ch=bottom_ch, out_ch=n_class,reduction=64)
+        self.fpa = DFE(in_ch=bottom_ch, out_ch=n_class,reduction=64)
 
-        self.gau3 = GAUModule(in_ch=bottom_ch // 2, out_ch=n_class)
+        self.gau3 = FFU(in_ch=bottom_ch // 2, out_ch=n_class)
 
-        self.gau2 = GAUModule(in_ch=bottom_ch // 4, out_ch=n_class)
+        self.gau2 = FFU(in_ch=bottom_ch // 4, out_ch=n_class)
 
-        self.gau1 = GAUModule(in_ch=bottom_ch // 8, out_ch=n_class)
+        self.gau1 = FFU(in_ch=bottom_ch // 8, out_ch=n_class)
 
-        self.gau0 = GAUModule(in_ch=bottom_ch // 32, out_ch=n_class)
+        self.gau0 = FFU(in_ch=bottom_ch // 32, out_ch=n_class)
 
 
         self.ARM3=AttentionRefineModule(1024,out_ch=bottom_ch // 2)
@@ -712,9 +712,9 @@ class A_3(nn.Module):
         #self.FFM=FeatureFusionModule(in_ch=bottom_ch // 8,out_ch=n_class)
         self.FFM1 = FeatureFusionModule(in_ch=66, out_ch=n_class)
 
-        self.BGA3 = BGALayer3()
-        self.BGA2=BGALayer2 ()
-        self.BGA1=BGALayer1 ()
+        self.BGA3 = MBA3()
+        self.BGA2=MBA2 ()
+        self.BGA1=MBA1 ()
 
         self.conv3 = Conv2dBnRelu(in_ch=n_class, out_ch=n_class, kernel_size=1, stride=1, padding=0)
 
